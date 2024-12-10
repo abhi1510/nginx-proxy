@@ -1,0 +1,50 @@
+version: "3.8"
+
+services:
+  planner_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: planner_app
+    environment:
+      - SERVICE=Planner
+    networks:
+      - eic_network
+
+  simulator_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: simulator_app
+    environment:
+      - SERVICE=Simulator
+    networks:
+      - eic_network
+
+  physics_engine_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: physics_engine_app
+    environment:
+      - SERVICE=PhysicsEngine
+    networks:
+      - eic_network
+
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    container_name: nginx
+    ports:
+      - "80:80"  # Expose NGINX to the outside world
+    depends_on:
+      - planner_app
+      - simulator_app
+      - physics_engine_app
+    networks:
+      - eic_network
+
+networks:
+  eic_network:
+    driver: bridge
